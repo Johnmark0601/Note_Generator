@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Notes Generator</title>
+<link rel="icon" type="image/png" href="https://kodenashi.github.io/notes_generator/assets/favicon.ico">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+ 
+<div class="container">
+<!-- Logo Placeholder -->
+<div style="text-align:center; margin-bottom:15px;">
+<img src="https://kodenashi.github.io/notes_generator/assets/logo.png" alt="Logo" style="max-width:120px;">
+</div>
+ 
+    <h2>Notes Generator</h2>
+ 
+    <!-- Note type selector -->
+<label for="noteType">Select Note Type:</label>
+<select id="noteType" onchange="showForm()">
+<option value="">-- Choose a Note --</option>
+<option value="note1">OSAD</option>
+<option value="note2">Site Launch</option>
+</select>
+ 
+    <!-- OSAD Form -->
+<form id="note1Form" style="display:none;">
+<label>Product affected (Domain | Prod Instance ID):</label>
+<input type="text" id="product" oninput="updatePreview()">
+ 
+        <label>How to Replicate/Reproduce the issue/error:</label>
+<textarea id="replicate" oninput="updatePreview()"></textarea>
+ 
+        <label>Error Message (if there is one):</label>
+<textarea id="error" oninput="updatePreview()"></textarea>
+ 
+        <label>Desired Result:</label>
+<textarea id="result" oninput="updatePreview()"></textarea>
+ 
+        <label>What was done/Troubleshooting done:</label>
+<textarea id="troubleshooting" oninput="updatePreview()"></textarea>
+ 
+        <label>F-Case:</label>
+<input type="text" id="fcase" oninput="updatePreview()">
+ 
+        <label>Additional Notes:</label>
+<textarea id="notes" oninput="updatePreview()"></textarea>
+ 
+        <label>How would the client like to be contacted (email or phone)?</label>
+<input type="text" id="contact" oninput="updatePreview()">
+ 
+        <label>Newfold Email:</label>
+<input type="email" id="email" oninput="updatePreview()">
+</form>
+ 
+    <!-- Site Launch Form -->
+<form id="note2Form" style="display:none;">
+<label>F-case:</label>
+<input type="text" id="fcase2" oninput="updatePreview()">
+ 
+        <label>The domain name we are launching the website:</label>
+<input type="text" id="domainLaunch" oninput="updatePreview()">
+ 
+        <label>Verified the domain is either registered with us or pointed to us:</label>
+<input type="text" id="verifiedDomain" oninput="updatePreview()">
+ 
+        <label>Did the customer purchase an SSL?</label>
+<input type="text" id="sslPurchase" oninput="updatePreview()">
+ 
+        <label>Team (PPCC or Other):</label>
+<input type="text" id="team" oninput="updatePreview()">
+ 
+        <label>Newfold Email:</label>
+<input type="email" id="email2" oninput="updatePreview()">
+</form>
+ 
+    <!-- Preview -->
+<div id="output" style="display:none;"></div>
+ 
+    <!-- Buttons -->
+<div style="display:flex; gap:10px; margin-top:10px;">
+<button id="copyBtn" style="display:none;" onclick="copyNotes()">Copy to Clipboard</button>
+<button id="resetBtn" style="display:none; background:#dc3545;" onclick="resetForm()">Reset</button>
+</div>
+</div>
+ 
+<script src="script.js"></script>
+</body>
+</html>
+ 
