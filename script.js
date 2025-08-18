@@ -1,75 +1,180 @@
-function showForm() {
-    let type = document.getElementById('noteType').value;
+// ---------- Live preview (works for every form) ----------
+function updatePreview(evtOrForm) {
+  let form = null;
  
-    // Hide both forms
-    document.getElementById('note1Form').style.display = 'none';
-    document.getElementById('note2Form').style.display = 'none';
+  if (evtOrForm && evtOrForm.nodeName === 'FORM') {
+    form = evtOrForm;
+  } else if (evtOrForm && evtOrForm.target) {
+    form = evtOrForm.target.closest('form');
+  } else {
+    form = document.querySelector('form.template-form.active');
+  }
+  if (!form) return;
  
-    // Show the chosen form
-    if (type === 'note1') document.getElementById('note1Form').style.display = 'block';
-    if (type === 'note2') document.getElementById('note2Form').style.display = 'block';
+  const lines = [];
  
-    // Show preview and buttons if a form is selected
-    if (type) {
-        document.getElementById('output').style.display = 'block';
-        document.getElementById('copyBtn').style.display = 'inline-block';
-        document.getElementById('resetBtn').style.display = 'inline-block';
-    } else {
-        document.getElementById('output').style.display = 'none';
-        document.getElementById('copyBtn').style.display = 'none';
-        document.getElementById('resetBtn').style.display = 'none';
-    }
+  form.querySelectorAll('input, textarea').forEach(el => {
+    if (el.classList.contains('change-text')) return;
+    if (el.type === 'button') return;
  
-    updatePreview();
+    const val = (el.value || '').trim();
+    if (!val) return;
+ 
+    const labelEl = el.previousElementSibling;
+    const label = labelEl ? labelEl.textContent.trim() : '';
+    lines.push(`${label} ${val}`.trim());
+  });
+ 
+  const changeEls = form.querySelectorAll('#changeRequests .change-text');
+  changeEls.forEach((el, idx) => {
+    const val = (el.value || '').trim();
+    if (val) lines.push(`Change Request ${idx + 1}: ${val}`);
+  });
+ 
+  const preview = form.querySelector('.preview-box');
+  if (preview) preview.textContent = lines.join('\n');
 }
  
-function updatePreview() {
-    let type = document.getElementById('noteType').value;
-    let text = "";
+// Attach live preview to all forms
+document.querySelectorAll('form.template-form').forEach(form => {
+  form.addEventListener('input', updatePreview);
+});
  
-    if (type === 'note1') {
-        text =
-`Product affected(Domain | Prod Instance ID): ${document.getElementById('product').value}
-How to Replicate/Reproduce the issue/error: ${document.getElementById('replicate').value}
-Error Message (if there is one): ${document.getElementById('error').value}
-Desired Result: ${document.getElementById('result').value}
-What was done/Troubleshooting done: ${document.getElementById('troubleshooting').value}
-F-Case: ${document.getElementById('fcase').value}
-Additional Notes: ${document.getElementById('notes').value}
-How would the client like to be contacted(email or phone)? ${document.getElementById('contact').value}
-Newfold Email: ${document.getElementById('email').value}`;
-    } 
-    else if (type === 'note2') {
-        text =
-`F-case: ${document.getElementById('fcase2').value}
-The domain name we are launching the website: ${document.getElementById('domainLaunch').value}
-Verified the domain is either registered with us or pointed to us: ${document.getElementById('verifiedDomain').value}
-Did the customer purchase an SSL?: ${document.getElementById('sslPurchase').value}
-Team (PPCC or Other): ${document.getElementById('team').value}
-Newfold Email: ${document.getElementById('email2').value}`;
-    }
- 
-    document.getElementById('output').textContent = text;
+// ---------- Copy / Reset ----------
+function copyPreview(formId) {
+  const preview = document.querySelector(`#${formId} .preview-box`);
+  if (!preview) return;
+  navigator.clipboard.writeText(preview.textContent || '').then(() => {
+    alert('Copied to clipboard!');
+  });
 }
  
-function copyNotes() {
-    let text = document.getElementById('output').textContent;
-    if (text.trim() !== "") {
-        navigator.clipboard.writeText(text).then(() => {
-            alert("Notes copied to clipboard!");
-        });
-    } else {
-        alert("Please fill in some fields before copying.");
-    }
+function resetForm(formId) {
+  const form = document.getElementById(formId);
+  if (!form) return;
+  form.reset();
+  const preview = form.querySelector('.preview-box');
+  if (preview) preview.textContent = '';
 }
  
-function resetForm() {
-    document.getElementById('noteType').value = "";
-    document.getElementById('note1Form').reset?.();
-    document.getElementById('note2Form').reset?.();
-    document.getElementById('note1Form').style.display = 'none';
-    document.getElementById('note2Form').style.display = 'none';
-    document.getElementById('output').style.display = 'none';
-    document.getElementById('copyBtn').style.display = 'none';
-    document.getElementById('resetBtn').style.display = 'none';
+// ---------- Helpers ----------
+function hideAllForms() {
+  document.querySelectorAll('.template-form.active').forEach(f => f.classList.remove('active'));
 }
+ 
+function getOtherContainer(currentContainer) {
+  const containers = Array.from(document.querySelectorAll('.template-selector-container'));
+  return containers.find(c => c !== currentContainer) || null;
+}
+ 
+function addBackButtons(form) {
+  if (!form) return;
+ 
+  // Top button
+  if (!form.querySelector('.btn-back.top')) {
+    const topBtn = document.createElement('button');
+    topBtn.type = 'button';
+    topBtn.className = 'btn-back top';
+    topBtn.textContent = '← Back to template selector';
+    topBtn.style.margin = '8px 0 12px';
+    topBtn.addEventListener('click', backToSelector);
+    form.insertBefore(topBtn, form.firstChild);
+  }
+ 
+  // Bottom button
+  if (!form.querySelector('.btn-back.bottom')) {
+    const bottomBtn = document.createElement('button');
+    bottomBtn.type = 'button';
+    bottomBtn.className = 'btn-back bottom';
+    bottomBtn.textContent = '← Back to template selector';
+    bottomBtn.style.margin = '12px 0 8px';
+    bottomBtn.addEventListener('click', backToSelector);
+    form.appendChild(bottomBtn);
+  }
+}
+ 
+function backToSelector() {
+  hideAllForms();
+  document.querySelectorAll('.template-selector-container').forEach(c => (c.style.display = ''));
+  document.querySelectorAll('.template-selector-container select').forEach(sel => {
+    sel.style.display = '';
+    sel.value = '';
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+ 
+// ---------- PPCC / OSAD toggles ----------
+function showPPCCForm() {
+  const dropdown = document.getElementById('ppccDropdown');
+  const selectedId = dropdown.value;
+  const ppccContainer = dropdown.closest('.template-selector-container');
+  const otherContainer = getOtherContainer(ppccContainer);
+ 
+  hideAllForms();
+  if (!selectedId) return;
+ 
+  const form = document.getElementById(selectedId);
+  if (form) {
+    form.classList.add('active');
+    addBackButtons(form);
+    updatePreview(form);
+  }
+ 
+  if (otherContainer) otherContainer.style.display = 'none';
+  dropdown.style.display = 'none';
+}
+ 
+function showOSADForm() {
+  const dropdown = document.getElementById('osadDropdown');
+  const selectedId = dropdown.value;
+  const osadContainer = dropdown.closest('.template-selector-container');
+  const otherContainer = getOtherContainer(osadContainer);
+ 
+  hideAllForms();
+  if (!selectedId) return;
+ 
+  const form = document.getElementById(selectedId);
+  if (form) {
+    form.classList.add('active');
+    addBackButtons(form);
+    updatePreview(form);
+  }
+ 
+  if (otherContainer) otherContainer.style.display = 'none';
+  dropdown.style.display = 'none';
+}
+ 
+// ---------- LBL: Add / Remove Change Requests ----------
+document.addEventListener('DOMContentLoaded', () => {
+  const addBtn = document.getElementById('addChangeBtn');
+  const container = document.getElementById('changeRequests');
+ 
+  if (addBtn && container) {
+    addBtn.addEventListener('click', () => {
+      const form = addBtn.closest('form');
+ 
+      const wrapper = document.createElement('div');
+      wrapper.className = 'change-request-field';
+ 
+      const textarea = document.createElement('textarea');
+      textarea.className = 'change-text';
+      textarea.placeholder = 'Describe the change request...';
+      textarea.addEventListener('input', updatePreview);
+ 
+      const delBtn = document.createElement('button');
+      delBtn.type = 'button';
+      delBtn.className = 'btn-delete';
+      delBtn.textContent = 'Delete';
+      delBtn.addEventListener('click', () => {
+        wrapper.remove();
+        updatePreview(form);
+      });
+ 
+      wrapper.appendChild(textarea);
+      wrapper.appendChild(delBtn);
+      container.appendChild(wrapper);
+ 
+      updatePreview(form);
+    });
+  }
+});
