@@ -226,34 +226,23 @@
             <div style="text-align:center;">
                 <img src="https://kodenashi.github.io/notes_generator/assets/logo.png" alt="Logo" style="max-width:120px;">
             </div>
-            <h2 style="text-align:center;">OSAD Templates</h2>
+            <h2 style="text-align:center;">PST Templates</h2>
             <select id="osadDropdown" onchange="showOSADForm()">
                 <option value="">-- Select a Template --</option>
-                <option value="note1Form">OSAD Notes</option>
-                <option value="note2Form">Site Launch</option>
+                <option value="note1Form">PST - Technical Support Notes</option>
+                <option value="note2Form">PST - Site Launch</option>
             </select>
 
             <!-- OSAD Notes -->
             <form id="note1Form" class="template-form">
-                <h2>OSAD Notes</h2>
-                <label>Product affected:</label>
-                <input type="text" id="product1" oninput="updatePreview()">
-                <label>How to Replicate/Reproduce the issue/error:</label>
+                <h2>PST - Technical Support Notes</h2>
+                <label>How to Replicate/Reproduce the issue/error (Attach any screenshots):</label>
                 <textarea id="replicate1" oninput="updatePreview()"></textarea>
-                <label>Error Message:</label>
-                <textarea id="error1" oninput="updatePreview()"></textarea>
-                <label>Desired Result:</label>
+                <label>What was done/Troubleshooting done: :</label>
                 <textarea id="result1" oninput="updatePreview()"></textarea>
-                <label>Troubleshooting done:</label>
-                <textarea id="troubleshooting1" oninput="updatePreview()"></textarea>
-                <label>F-Case:</label>
-                <input type="text" id="fcase1" oninput="updatePreview()">
-                <label>Additional Notes:</label>
-                <textarea id="notes1" oninput="updatePreview()"></textarea>
-                <label>Contact Method:</label>
+                <label>Who needs to be contacted (Customer or provide your team name):</label>
                 <input type="text" id="contact1" oninput="updatePreview()">
-                <label>Newfold Email:</label>
-                <input type="email" id="email1" oninput="updatePreview()">
+
 
                 <div class="preview-container">
                     <h3>Preview</h3>
@@ -268,18 +257,16 @@
             <!-- Site Launch -->
             <form id="note2Form" class="template-form">
                 <h2>Site Launch</h2>
-                <label>F-case:</label>
-                <input type="text" id="fcase2" oninput="updatePreview()">
-                <label>The domain name:</label>
+                <label>The domain name we are launching the website: </label>
                 <input type="text" id="domainLaunch2" oninput="updatePreview()">
-                <label>Verified domain:</label>
+                <label>Verified the domain is either registered with us or pointed to us: </label>
                 <input type="text" id="verifiedDomain2" oninput="updatePreview()">
-                <label>SSL Purchased?</label>
+                <small>If the domain is not in the same account, then it either needs to be merged or transferred.</small>
+                <label>Did the customer purchase an SSL? </label>
                 <input type="text" id="sslPurchase2" oninput="updatePreview()">
-                <label>Team:</label>
+                <label>Who needs to be contacted: </label>
                 <input type="text" id="team2" oninput="updatePreview()">
-                <label>Newfold Email:</label>
-                <input type="email" id="email2" oninput="updatePreview()">
+                <small>(Customer or provide your team name)</small>
 
                 <div class="preview-container">
                     <h3>Preview</h3>
